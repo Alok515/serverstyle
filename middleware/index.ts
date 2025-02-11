@@ -22,5 +22,26 @@ export const authMiddleware: express.RequestHandler = async ( req: Request, res:
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error").end();
+        return;
+    }
+}
+
+export const isOwner : express.RequestHandler = ( req: Request, res: Response, next: NextFunction ): void => {
+    try {
+        const { id } = req.params;
+        const currentUserId: string = get(req, "identity._id") || '';
+        if (!currentUserId) {
+            res.status(403).send("Unauthorized").end();
+            return;
+        }
+        if(currentUserId.toString() !== id) {
+            res.status(403).send("Unauthorized").end();
+            return;
+        }
+        next();
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error").end();
+        return;
     }
 }
