@@ -38,6 +38,7 @@ export const login: express.RequestHandler = async (req: Request, res: Response)
         const { email, password } = req.body;
         if (!email || !password) {
             res.status(400).send("Bad Request").end();
+            return;
         }
 
         const user = await getUserByEmailWithAuth(email);
@@ -51,6 +52,7 @@ export const login: express.RequestHandler = async (req: Request, res: Response)
         
         if (user.auth.password !== exprectedHash) {
             res.status(403).send("Unauthorized").end();
+            return;
         }
 
         const salt = random();
@@ -62,5 +64,6 @@ export const login: express.RequestHandler = async (req: Request, res: Response)
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error").end();
+        return;
     }
 }
